@@ -21,7 +21,7 @@ struct Instance: Equatable {
 struct Transform: Equatable {
     var position: SIMD3<Float> = .zero
     var rotation: SIMD3<Float> = .zero          // degrees
-    var scale: SIMD3<Float> = SIMD3(1, 1, 1)   // uniform or per-axis
+    var scale: SIMD3<Float> = SIMD3(5, 5, 5)   // uniform or per-axis
 }
 
 // MARK: - GeometryType
@@ -32,12 +32,18 @@ enum GeometryType: String, CaseIterable, Equatable, Hashable {
     case cylinder = "Cylinder"
     case plane    = "Plane"
 
-    func makeGeometry() -> SCNGeometry {
+    func makeGeometry(chamferRadius: Float = 0) -> SCNGeometry {
         switch self {
-        case .box:      return SCNBox(width: 1, height: 1, length: 1, chamferRadius: 0.04)
-        case .sphere:   return SCNSphere(radius: 0.5)
-        case .cylinder: return SCNCylinder(radius: 0.4, height: 1)
-        case .plane:    return SCNPlane(width: 1, height: 1)
+        case .box:
+            return SCNBox(width: 1, height: 1, length: 1, chamferRadius: CGFloat(chamferRadius))
+        case .sphere:
+            let s = SCNSphere(radius: 0.5)
+            s.segmentCount = 96     // high enough to stay smooth at large scales
+            return s
+        case .cylinder:
+            return SCNCylinder(radius: 0.4, height: 1)
+        case .plane:
+            return SCNPlane(width: 1, height: 1)
         }
     }
 
@@ -112,6 +118,8 @@ struct SceneObject: Identifiable, Equatable {
     var isVisible: Bool
     /// Per-object seed combined with modifier seeds for deterministic noise
     var seed: Int
+    /// Chamfer (rounded edge) radius — only visible on Box; ignored by other geometry types
+    var chamferRadius: Float
 
     init(
         id: UUID = UUID(),
@@ -121,7 +129,8 @@ struct SceneObject: Identifiable, Equatable {
         material: MaterialConfig = MaterialConfig(),
         modifiers: [Modifier] = [],
         isVisible: Bool = true,
-        seed: Int? = nil
+        seed: Int? = nil,
+        chamferRadius: Float? = nil
     ) {
         self.id = id
         self.name = name
@@ -131,6 +140,7 @@ struct SceneObject: Identifiable, Equatable {
         self.modifiers = modifiers
         self.isVisible = isVisible
         self.seed = seed ?? Int.random(in: 1...Int.max)
+        self.chamferRadius = chamferRadius ?? (geometryType == .box ? 0.04 : 0.0)
     }
 }
 

@@ -13,8 +13,6 @@ final class SceneController: ObservableObject {
     private var objectNodes: [UUID: SCNNode] = [:]
     // Per-object base geometry (shared by all child nodes under that object)
     private var objectGeometries: [UUID: SCNGeometry] = [:]
-    // Shared source geometry per type — never modified, only copied
-    private var geometryCache: [GeometryType: SCNGeometry] = [:]
     // Last known state for diffing; used to detect which objects changed
     private var lastObjects: [UUID: SceneObject] = [:]
     // Light nodes keyed by LightConfig.id
@@ -45,14 +43,7 @@ final class SceneController: ObservableObject {
         setCamera(.isometric)
     }
 
-    // MARK: - Geometry cache
-
-    private func sourceGeometry(for type: GeometryType) -> SCNGeometry {
-        if let g = geometryCache[type] { return g }
-        let g = type.makeGeometry()
-        geometryCache[type] = g
-        return g
-    }
+    // Geometry is created fresh per object so per-object params (chamferRadius) are respected.
 
     // MARK: - Main sync entry point
 
@@ -85,8 +76,8 @@ final class SceneController: ObservableObject {
     func rebuildNode(for object: SceneObject) {
         objectNodes[object.id]?.removeFromParentNode()
 
-        // Copy source geometry once per object — all child nodes share this reference
-        let geo = sourceGeometry(for: object.geometryType).copy() as! SCNGeometry
+        // Build geometry with per-object parameters (chamfer radius, segment count, etc.)
+        let geo = object.geometryType.makeGeometry(chamferRadius: object.chamferRadius)
         let mat = object.material.makeSCNMaterial()
         geo.materials = [mat]
         objectGeometries[object.id] = geo
