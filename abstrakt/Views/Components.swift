@@ -19,7 +19,7 @@ struct SectionHeader: View {
     }
 }
 
-// MARK: - Labeled float slider (compact)
+// MARK: - Labeled float slider with editable number field
 
 struct FloatRow: View {
     let label: String
@@ -27,18 +27,67 @@ struct FloatRow: View {
     let range: ClosedRange<Float>
     var step: Float = 0.1
 
+    @State private var text: String = ""
+    @FocusState private var focused: Bool
+
     var body: some View {
         HStack(spacing: 6) {
             Text(label)
                 .font(.caption.monospaced())
                 .foregroundStyle(.secondary)
                 .frame(width: 14, alignment: .center)
+
             Slider(value: $value, in: range, step: step)
-            Text(String(format: "%.2f", value))
+                .onChange(of: value) { _, newVal in
+                    if !focused { text = format(newVal) }
+                }
+
+            TextField("", text: $text)
                 .font(.caption.monospaced())
                 .foregroundStyle(.secondary)
-                .frame(width: 38, alignment: .trailing)
+                .multilineTextAlignment(.trailing)
+                .frame(width: 42)
+                .focused($focused)
+                .textFieldStyle(.plain)
+                .padding(.horizontal, 4)
+                .padding(.vertical, 2)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(focused
+                              ? Color.accentColor.opacity(0.15)
+                              : Color.white.opacity(0.05))
+                )
+                .onSubmit { commit() }
+                .onChange(of: focused) { _, isFocused in
+                    if isFocused {
+                        text = format(value)
+                    } else {
+                        commit()
+                    }
+                }
+                .onAppear { text = format(value) }
         }
+    }
+
+    // MARK: - Helpers
+
+    /// Decimal places derived from the step so the display never shows spurious digits.
+    private var decimals: Int {
+        if step >= 1  { return 0 }
+        if step >= 0.1 { return 1 }
+        return 2
+    }
+
+    private func format(_ v: Float) -> String {
+        String(format: "%.\(decimals)f", v)
+    }
+
+    private func commit() {
+        if let parsed = Float(text) {
+            let snapped = (parsed / step).rounded() * step
+            value = min(range.upperBound, max(range.lowerBound, snapped))
+        }
+        text = format(value)
     }
 }
 
