@@ -31,8 +31,7 @@ struct SidebarView: View {
             }
         }
         .frame(width: 260)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
-        .frame(maxHeight: 700)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 0))
     }
 }
 

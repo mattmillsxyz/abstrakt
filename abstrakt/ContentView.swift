@@ -53,11 +53,9 @@ struct ContentView: View {
                     Spacer()
                 }
 
-                // Left sidebar — floats over the canvas
-                HStack(alignment: .top) {
+                // Left sidebar — full height, flush to the left edge
+                HStack(alignment: .top, spacing: 0) {
                     SidebarView()
-                        .padding(.leading, 14)
-                        .padding(.top, 66)
                     Spacer()
                 }
             }
