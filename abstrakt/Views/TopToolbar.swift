@@ -69,9 +69,10 @@ struct TopToolbar: View {
             ExportButton()
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 7)
+        .padding(.vertical, 5)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
         .buttonStyle(.borderless)
+        .controlSize(.small)
     }
 
     private var toolbarDivider: some View {
@@ -114,7 +115,8 @@ struct ExportButton: View {
                     aspectRatio: appState.aspectRatioMode,
                     scale: appState.exportScale,
                     format: appState.exportFormat,
-                    backgroundColor: appState.backgroundColor
+                    backgroundColor: appState.backgroundColor,
+                    cropVerticalInset: appState.cropVerticalInset
                 )
             } label: {
                 Label("Export…", systemImage: "square.and.arrow.up")

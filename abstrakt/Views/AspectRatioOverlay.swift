@@ -5,7 +5,11 @@ struct AspectRatioOverlay: View {
 
     var body: some View {
         GeometryReader { geo in
-            let cropRect = centeredCropRect(for: appState.aspectRatioMode, in: geo.size)
+            let cropRect = Self.centeredCropRect(
+                for: appState.aspectRatioMode,
+                in: geo.size,
+                verticalInset: appState.cropVerticalInset
+            )
 
             ZStack {
                 // Letterbox: dark fill with even-odd hole for the crop region
@@ -26,25 +30,31 @@ struct AspectRatioOverlay: View {
 
     // MARK: - Crop rect calculation (mirrors ExportManager logic)
 
-    /// Returns the largest centered CGRect that fits `size` with the given aspect ratio.
-    static func centeredCropRect(for ratio: AspectRatioMode, in size: CGSize) -> CGRect {
+    /// Returns the largest centered CGRect that fits within `size` (minus vertical insets)
+    /// for the given aspect ratio. The inset is applied equally top and bottom so the
+    /// frame sits below the toolbar and has matching breathing room at the bottom.
+    static func centeredCropRect(
+        for ratio: AspectRatioMode,
+        in size: CGSize,
+        verticalInset: CGFloat = 0
+    ) -> CGRect {
+        let available = CGSize(
+            width:  size.width,
+            height: size.height - verticalInset * 2
+        )
         let r = ratio.value
-        var w = size.width
-        var h = size.height
+        var w = available.width
+        var h = available.height
         if w / h > r {
             w = h * r
         } else {
             h = w / r
         }
         return CGRect(
-            x: (size.width  - w) / 2,
-            y: (size.height - h) / 2,
+            x: (size.width   - w) / 2,
+            y: verticalInset + (available.height - h) / 2,
             width:  w,
             height: h
         )
-    }
-
-    private func centeredCropRect(for ratio: AspectRatioMode, in size: CGSize) -> CGRect {
-        Self.centeredCropRect(for: ratio, in: size)
     }
 }

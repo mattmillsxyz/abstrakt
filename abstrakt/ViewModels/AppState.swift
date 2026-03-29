@@ -17,6 +17,9 @@ final class AppState: ObservableObject {
     @Published var exportFormat: ExportFormat = .png
     /// Stored by ContentView via GeometryReader so ExportManager can use it
     @Published var viewportSize: CGSize = CGSize(width: 1280, height: 800)
+    /// Vertical inset (top and bottom) for the aspect ratio crop frame.
+    /// Measured dynamically from the toolbar height so the frame sits just below the toolbar.
+    @Published var cropVerticalInset: CGFloat = 60
 
     // MARK: - Computed selected object
 

@@ -8,6 +8,14 @@
 import SwiftUI
 import SceneKit
 
+// Passes the toolbar's bottom edge (in canvas-local coordinates) up to ContentView.
+private struct ToolbarBottomKey: PreferenceKey {
+    static var defaultValue: CGFloat = 60
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
 struct ContentView: View {
     @StateObject private var appState = AppState()
     @StateObject private var sceneController = SceneController()
@@ -32,6 +40,16 @@ struct ContentView: View {
                         Spacer()
                     }
                     .padding(.top, 14)
+                    // Measure where the toolbar's bottom edge sits so the crop frame
+                    // can start just below it with a small gap.
+                    .background(
+                        GeometryReader { proxy in
+                            Color.clear.preference(
+                                key: ToolbarBottomKey.self,
+                                value: proxy.frame(in: .named("canvas")).maxY + 10
+                            )
+                        }
+                    )
                     Spacer()
                 }
 
@@ -42,6 +60,10 @@ struct ContentView: View {
                         .padding(.top, 66)
                     Spacer()
                 }
+            }
+            .coordinateSpace(name: "canvas")
+            .onPreferenceChange(ToolbarBottomKey.self) { inset in
+                appState.cropVerticalInset = inset
             }
             .onAppear {
                 appState.viewportSize = geo.size

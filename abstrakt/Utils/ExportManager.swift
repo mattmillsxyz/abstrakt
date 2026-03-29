@@ -15,7 +15,8 @@ enum ExportManager {
         aspectRatio: AspectRatioMode,
         scale: Int,
         format: ExportFormat,
-        backgroundColor: Color
+        backgroundColor: Color,
+        cropVerticalInset: CGFloat = 0
     ) {
         // 1. Present save panel (must run on main thread — button actions are already on main)
         let panel = NSSavePanel()
@@ -54,7 +55,11 @@ enum ExportManager {
         }
 
         // 4. Center-crop to aspect ratio (matches overlay exactly)
-        let cropInViewCoords = AspectRatioOverlay.centeredCropRect(for: aspectRatio, in: viewportSize)
+        let cropInViewCoords = AspectRatioOverlay.centeredCropRect(
+            for: aspectRatio,
+            in: viewportSize,
+            verticalInset: cropVerticalInset
+        )
         guard let cropped = crop(image: rendered,
                                  cropInViewCoords: cropInViewCoords,
                                  viewportSize: viewportSize,
