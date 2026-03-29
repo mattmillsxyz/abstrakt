@@ -25,8 +25,9 @@ struct TransformSection: View {
                     step: 0.1
                 )
 
-                // Chamfer radius — only applicable to Box geometry
-                if appState.objects[idx].geometryType == .box {
+                // Chamfer radius — Box (native) and Cylinder (capsule blend)
+                if appState.objects[idx].geometryType == .box ||
+                   appState.objects[idx].geometryType == .cylinder {
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Chamfer")
                             .font(.caption.weight(.medium))

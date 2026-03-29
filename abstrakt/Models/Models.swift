@@ -41,7 +41,19 @@ enum GeometryType: String, CaseIterable, Equatable, Hashable {
             s.segmentCount = 96     // high enough to stay smooth at large scales
             return s
         case .cylinder:
-            return SCNCylinder(radius: 0.4, height: 1)
+            // chamferRadius = 0 → flat SCNCylinder; > 0 → SCNCapsule with rounded caps.
+            // capRadius is mapped so that max chamfer (0.49) produces a perfect capsule at radius 0.4.
+            if chamferRadius < 0.001 {
+                let c = SCNCylinder(radius: 0.4, height: 1.0)
+                c.radialSegmentCount = 96
+                return c
+            } else {
+                let capR = CGFloat(chamferRadius) * (0.4 / 0.49)
+                let bodyH = max(0.01, 1.0 - 2.0 * capR)
+                let c = SCNCapsule(capRadius: capR, height: bodyH)
+                c.radialSegmentCount = 96
+                return c
+            }
         case .plane:
             return SCNPlane(width: 1, height: 1)
         }
