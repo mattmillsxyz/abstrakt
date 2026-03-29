@@ -20,7 +20,7 @@ struct AspectRatioOverlay: View {
                 .fill(Color.black.opacity(0.4), style: FillStyle(eoFill: true))
 
                 // Yellow aspect frame border
-                Rectangle()
+                RoundedRectangle(cornerRadius: 4)
                     .stroke(Color.yellow.opacity(0.85), lineWidth: 1.5)
                     .frame(width: cropRect.width, height: cropRect.height)
                     .position(x: cropRect.midX, y: cropRect.midY)
