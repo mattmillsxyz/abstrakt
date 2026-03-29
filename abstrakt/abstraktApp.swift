@@ -13,5 +13,7 @@ struct abstraktApp: App {
         WindowGroup {
             ContentView()
         }
+        .defaultSize(width: 1440, height: 900)
+        .windowResizability(.contentSize)
     }
 }
