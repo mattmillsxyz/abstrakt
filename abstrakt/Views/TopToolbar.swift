@@ -20,25 +20,28 @@ struct TopToolbar: View {
 
             toolbarDivider
 
-            // Camera toggle
+            // Camera group: icon + projection toggle + aspect ratio
+            Image(systemName: "camera")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(.secondary)
+
             Picker("Camera", selection: $appState.cameraMode) {
                 ForEach(CameraMode.allCases, id: \.self) { mode in
                     Text(mode.rawValue).tag(mode)
                 }
             }
             .pickerStyle(.segmented)
+            .labelsHidden()
             .frame(width: 90)
             .help("Toggle camera mode")
 
-            toolbarDivider
-
-            // Aspect ratio
             Picker("Ratio", selection: $appState.aspectRatioMode) {
                 ForEach(AspectRatioMode.allCases, id: \.self) { ratio in
                     Text(ratio.rawValue).tag(ratio)
                 }
             }
             .pickerStyle(.menu)
+            .labelsHidden()
             .frame(width: 68)
             .help("Aspect ratio overlay")
 
@@ -69,10 +72,9 @@ struct TopToolbar: View {
             ExportButton()
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 5)
+        .padding(.vertical, 6)
         .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
         .buttonStyle(.borderless)
-        .controlSize(.small)
     }
 
     private var toolbarDivider: some View {
