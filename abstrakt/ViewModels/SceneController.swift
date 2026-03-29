@@ -136,22 +136,11 @@ final class SceneController: ObservableObject {
     }
 
     private func applyHighlight(for id: UUID) {
-        guard let root = objectNodes[id], let baseGeo = objectGeometries[id] else { return }
-        // Clone the geometry and its material; set emission on the clone only
-        let hGeo = baseGeo.copy() as! SCNGeometry
-        let hMat = (baseGeo.firstMaterial?.copy() as? SCNMaterial) ?? SCNMaterial()
-        hMat.emission.contents = NSColor(red: 1.0, green: 0.85, blue: 0.2, alpha: 0.45)
-        hGeo.materials = [hMat]
-        for child in root.childNodes {
-            child.geometry = hGeo
-        }
+        // No visual highlight — selection is reflected in the sidebar only.
     }
 
     private func restoreBaseGeometry(for id: UUID) {
-        guard let root = objectNodes[id], let baseGeo = objectGeometries[id] else { return }
-        for child in root.childNodes {
-            child.geometry = baseGeo
-        }
+        // Nothing to restore when no highlight is applied.
     }
 
     // MARK: - Camera
