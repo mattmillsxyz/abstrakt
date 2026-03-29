@@ -132,6 +132,8 @@ struct SceneObject: Identifiable, Equatable {
     var seed: Int
     /// Chamfer (rounded edge) radius — only visible on Box; ignored by other geometry types
     var chamferRadius: Float
+    /// When true, X/Y/Z scale axes are locked together and edited as a single uniform value
+    var scaleLocked: Bool
 
     init(
         id: UUID = UUID(),
@@ -142,7 +144,8 @@ struct SceneObject: Identifiable, Equatable {
         modifiers: [Modifier] = [],
         isVisible: Bool = true,
         seed: Int? = nil,
-        chamferRadius: Float? = nil
+        chamferRadius: Float? = nil,
+        scaleLocked: Bool = true
     ) {
         self.id = id
         self.name = name
@@ -153,6 +156,7 @@ struct SceneObject: Identifiable, Equatable {
         self.isVisible = isVisible
         self.seed = seed ?? Int.random(in: 1...Int.max)
         self.chamferRadius = chamferRadius ?? (geometryType == .box ? 0.04 : 0.0)
+        self.scaleLocked = scaleLocked
     }
 }
 
