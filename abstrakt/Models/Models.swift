@@ -20,7 +20,8 @@ struct Instance: Equatable {
 
 struct Transform: Equatable {
     var position: SIMD3<Float> = .zero
-    var rotation: SIMD3<Float> = .zero  // degrees
+    var rotation: SIMD3<Float> = .zero          // degrees
+    var scale: SIMD3<Float> = SIMD3(1, 1, 1)   // uniform or per-axis
 }
 
 // MARK: - GeometryType

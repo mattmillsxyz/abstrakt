@@ -97,6 +97,7 @@ final class SceneController: ObservableObject {
         root.name = object.id.uuidString
         root.position = SCNVector3(object.transform.position)
         root.eulerAngles = degreesToEuler(object.transform.rotation)
+        root.scale = SCNVector3(object.transform.scale)
 
         let instances = ModifierEngine.apply(object: object)
         for inst in instances {

@@ -10,13 +10,19 @@ struct TransformSection: View {
                     label: "Position",
                     value: $appState.objects[idx].transform.position,
                     range: -20...20,
-                    step: 0.5   // snap to 0.5 increments
+                    step: 0.5
                 )
                 Vec3Rows(
                     label: "Rotation",
                     value: $appState.objects[idx].transform.rotation,
                     range: -180...180,
-                    step: 15    // snap to 15° increments
+                    step: 15
+                )
+                Vec3Rows(
+                    label: "Scale",
+                    value: $appState.objects[idx].transform.scale,
+                    range: 0.01...10,
+                    step: 0.05
                 )
             }
         }
